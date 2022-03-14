@@ -8,12 +8,11 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import train_test_split 
 from sklearn.metrics import confusion_matrix
 from sklearn.ensemble import RandomForestRegressor
-import os
 
 def main():
-    #importing the dataset
-    dataset = pd.read_csv("detector/src/dataset.csv") 
-    dataset = dataset.drop('index', axis=1)
+    #importing the dataset 
+    dataset = pd.read_csv("detector/src/dataset/dataset.csv") 
+    dataset = dataset.drop('index', 1)
 
     #removing unwanted column 
     x = dataset.iloc[ : , :-1].values 
@@ -42,27 +41,19 @@ def main():
 
     #confusion matrix 
     cm =confusion_matrix(y_test, y_pred) 
+    print("Confusion Matrix: ")
     print(cm) 
     forest_regressor = RandomForestRegressor()
     forest_regressor.fit(x_train,y_train.ravel()) 
     prediction = forest_regressor.predict(x_test) 
     rmse = mean_squared_error(y_pred,y_test.ravel()) 
-    print(rmse)
+    print("Root Mean squared Error",rmse)
 
-    # pickle file joblib
-    if(not os.path.isdir("detector/src/final_model")):
-        os.mkdir("detector/src/final_model")
-    joblib.dump(classifier, 'detector/src/final_model/rf_final.pkl')
+    # pickle file joblib 
+    joblib.dump(classifier, 'final_model/rf_final.pkl')
     # #-------------Features Importance random forest 
     names = dataset.iloc[:,:-1].columns 
     importances =classifier.feature_importances_ 
     sorted_importances = sorted(importances, reverse=True)
     indices = np.argsort(-importances) 
     var_imp = pd.DataFrame(sorted_importances,names[indices], columns=['importance'])
-
-    #-------------plotting variable importance
-    # plt.title("Variable Importances")
-    # plt.barh(np.arange(len(names)), sorted_importances, height = 0.7) 
-    # plt.yticks(np.arange(len(names)), names[indices], fontsize=7) 
-    # plt.xlabel('Relative Importance') 
-    # plt.show()
