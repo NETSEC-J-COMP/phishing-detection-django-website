@@ -317,7 +317,6 @@ def age_of_domain(url):
         start_date = w.creation_date
         current_date = datetime.datetime.now()
         age = (current_date - start_date).days
-        print("age:", age)
 
         if age >= 180:
             return -1
